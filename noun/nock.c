@@ -432,6 +432,8 @@ u3n_nock_on(u3_noun bus, u3_noun fol)
 {
   u3_noun pro;
 
+  debugger();
+
   u3t_on(noc_o);
   pro = _n_nock_on(bus, fol);
   u3t_off(noc_o);

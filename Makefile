@@ -346,7 +346,9 @@ J_OFILES=\
        jets/tree.o
 
 D_OFILES=\
-       debug/console.o
+       debug/console.o \
+       debug/pipes.o \
+       debug/debugger.o
 
 BASE_OFILES=$(N_OFILES) $(J_OFILES) $(D_OFILES)
 

@@ -40,12 +40,15 @@ FILE *console_fp = NULL;
 int console_fd = -1;
 #endif
 
-/*
-    add some comments
-*/
+// Something must be reading the pipe or the console blocks urbit.
+// $ mkfifo /path/to/pipe
+// $ tail -f /path/to/pipe
+
 int
 console_init(const char* pipe)
 {
+  // mkfifo CONSOLE
+
   if (pipe == NULL)
     pipe = "/Users/jmf/URBIT/CONSOLE";
 
@@ -59,7 +62,8 @@ console_init(const char* pipe)
     exit(1);
   }
 
-  setbuf(console_fp, NULL);		// no buffering (still blocks if nothing reading pipe)
+  // do not buffer the output
+  setvbuf(console_fp, NULL, _IONBF, 0);
 
 #else // FD
 

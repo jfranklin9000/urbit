@@ -33,3 +33,5 @@
 #   include "jets/w.h"         //  u3w: jets (retain, core)
 
 #   include "debug/console.h"  //  console
+#   include "debug/pipes.h"    //  pipes
+#   include "debug/debugger.h" //  debugger
