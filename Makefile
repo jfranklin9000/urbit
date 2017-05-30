@@ -345,7 +345,10 @@ J_OFILES=\
        $(J_G_OFILES) \
        jets/tree.o
 
-BASE_OFILES=$(N_OFILES) $(J_OFILES)
+D_OFILES=\
+       debug/console.o
+
+BASE_OFILES=$(N_OFILES) $(J_OFILES) $(D_OFILES)
 
 OUT_OFILES=\
        outside/jhttp/http_parser.o \

@@ -433,6 +433,8 @@ c3_i
 main(c3_i   argc,
      c3_c** argv)
 {
+  (void) console_init(NULL);
+
   //  Parse options.
   //
   if ( c3n == _main_getopt(argc, argv) ) {
