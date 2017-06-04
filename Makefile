@@ -121,6 +121,7 @@ CFLAGS+= $(COSFLAGS) -ffast-math \
 	-Ioutside/scrypt \
 	-Ioutside/softfloat-3/source/include \
 	-Ioutside/murmur3 \
+	-Ioutside/SDL2-2.0.5/INSTALLED/include/SDL2 \
 	$(DEFINES) \
 	$(MDEFINES)
 
@@ -406,6 +407,13 @@ LIBSCRYPT=outside/scrypt/scrypt.a
 
 LIBSOFTFLOAT=outside/softfloat-3/build/Linux-386-GCC/softfloat.a
 
+# Tap dance to make `configure` run.
+LIBSDL2_MAKEFILE=outside/SDL2-2.0.5/Makefile
+LIBSDL2=outside/SDL2-2.0.5/INSTALLED/lib/libSDL2.a
+# Use this instead of $(LIBSDL2) when linking bin/urbit:
+# (Can't get bin/urbit to link using $(LIBSDL2) on Mac OS X El Capitan.)
+LIBSDL2_LINK=-L./outside/SDL2-2.0.5/INSTALLED/lib -lSDL2
+
 TAGS=\
        .tags \
        .etags \
@@ -459,17 +467,30 @@ $(LIBSCRYPT):
 $(LIBSOFTFLOAT):
 	$(MAKE) -C outside/softfloat-3/build/Linux-386-GCC
 
+# Library libSDL2.a is not created until `make install`.
+# It will be installed in outside/SDL2-2.0.5/INSTALLED (not system-wide).
+# It must be (made and) installed _before_ compiling $(VERE_OFILES) so
+# that the SDL header files are available at the installed location.
+$(LIBSDL2_MAKEFILE):
+	cd outside/SDL2-2.0.5 ; ./configure --prefix=`pwd`/INSTALLED ; make ; make install
+
+$(LIBSDL2): $(LIBSDL2_MAKEFILE)
+	$(MAKE) -C outside/SDL2-2.0.5
+
+# If you want to build the test programs in outside/SDL2-2.0.5/test use this command:
+# cd outside/SDL2-2.0.5/test ; ./configure --with-sdl-prefix=`pwd`/../INSTALLED ; make ; cd ../../..
+
 $(V_OFILES): include/vere/vere.h
 
 ifdef NO_SILENT_RULES
-$(BIN)/urbit: $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
+$(BIN)/urbit: $(LIBCOMMONMARK) $(LIBSDL2) $(VERE_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT) $(LIBSDL2_LINK)
 else
-$(BIN)/urbit: $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
+$(BIN)/urbit: $(LIBCOMMONMARK) $(LIBSDL2) $(VERE_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 	@echo "    CCLD  $(BIN)/urbit"
 	@mkdir -p $(BIN)
-	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
+	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT) $(LIBSDL2_LINK)
 endif
 
 tags: ctags etags gtags cscope
@@ -515,5 +536,6 @@ distclean: clean $(LIBUV_MAKEFILE)
 	$(MAKE) -C outside/anachronism clean
 	$(MAKE) -C outside/scrypt clean
 	$(MAKE) -C outside/softfloat-3/build/Linux-386-GCC clean
+	$(MAKE) -C outside/SDL2-2.0.5 clean
 
 .PHONY: clean debbuild debinstalldistclean etags osxpackage tags

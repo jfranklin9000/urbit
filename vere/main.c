@@ -1,6 +1,21 @@
 /* v/main.c
 **
 */
+
+/* We have to include SDL.h before term.h because term.h has:
+** (/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include/stdio.h)
+** `#define buttons CUR Numbers[30]`
+** so line:
+** `const SDL_MessageBoxButtonData *buttons;` in SDL_messagebox.h
+** gets converted to:
+** `const SDL_MessageBoxButtonData *cur_term->type. Numbers[30];`
+** which is clearly wrong and won't compile.
+*/
+#define USE_SDL
+#ifdef USE_SDL
+#include <SDL.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -433,6 +448,49 @@ c3_i
 main(c3_i   argc,
      c3_c** argv)
 {
+#ifdef USE_SDL
+  // check to see if SDL works
+  SDL_Window *win;
+  SDL_Renderer *ren;
+  SDL_Rect rec;
+  if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+    printf("SDL_Init Error: %s\n", SDL_GetError());
+  } else {
+    printf("SDL initialized!\n");
+    win = SDL_CreateWindow("Urbit SDL2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, SDL_WINDOW_SHOWN);
+    if (win == NULL) {
+      printf("SDL_CreateWindow Error: %s\n", SDL_GetError());
+    } else {
+      printf("SDL window created!\n");
+      ren = SDL_CreateRenderer(win, -1, 0);
+      if (ren == NULL) {
+        printf("SDL_CreateRenderer Error: %s\n", SDL_GetError());
+      } else {
+        printf("SDL renderer created!\n");
+        SDL_SetRenderDrawColor(ren, 128, 128, 128, 255);
+        SDL_RenderClear(ren);
+        SDL_SetRenderDrawColor(ren, 240, 16, 16, 255);
+        rec.x = 120; rec.y = 100; rec.w = 200; rec.h = 200;
+        SDL_RenderFillRect(ren, &rec);
+        SDL_SetRenderDrawColor(ren, 16, 240, 16, 255);
+        rec.x = 220; rec.y = 150; rec.w = 200; rec.h = 200;
+        SDL_RenderFillRect(ren, &rec);
+        SDL_SetRenderDrawColor(ren, 16, 16, 240, 255);
+        rec.x = 320; rec.y = 200; rec.w = 200; rec.h = 200;
+        SDL_RenderFillRect(ren, &rec);
+        SDL_RenderPresent(ren);
+		printf("SDL_Delay() 10 seconds..");
+		fflush(stdout);
+		SDL_Delay(10000);
+		printf("\n");
+        SDL_DestroyRenderer(ren);
+      }
+      SDL_DestroyWindow(win);
+    }
+    SDL_Quit();
+  }
+#endif
+
   //  Parse options.
   //
   if ( c3n == _main_getopt(argc, argv) ) {
