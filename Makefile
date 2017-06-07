@@ -343,6 +343,7 @@ J_OFILES=\
        $(J_F_OFILES) \
        $(J_F_OFILES_UT) \
        $(J_G_OFILES) \
+       jets/myjet/myfunc.o \
        jets/tree.o
 
 BASE_OFILES=$(N_OFILES) $(J_OFILES)

@@ -483,9 +483,17 @@ static u3j_core _zuse_d[] =
   };
 */
 
+static u3j_harm _myfunc_a[] = {{".2", myfunc, c3y}, {}};
+
+static u3j_core _myjet_d[] =
+  { { "myfunc", _myfunc_a },
+    {}
+  };
+
 static u3j_core _arvo_d[] =
   { { "down", 0, _down_d },
     { "aes", 0, _zuse__aes_d },
+    { "myjet", 0, _myjet_d },
     {}
   };
 

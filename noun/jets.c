@@ -21,21 +21,31 @@
     }
     return 1 + len_l;
   }
+static int indent = 0;
   /* _cj_install(): install dashboard entries.
   */
   static c3_w
   _cj_install(u3j_core* ray_u, c3_w jax_l, u3j_core* dev_u)
   {
     c3_w i_w;
+int i; i = 0;		// compiler warning suppression
 
     if ( dev_u ) {
       for ( i_w = 0; 0 != dev_u[i_w].cos_c; i_w++ ) {
         u3j_core* kid_u = &dev_u[i_w];
 
+#if 0
+for (i = 0; i < indent; i++)
+  fprintf(stderr, " ");
+fprintf(stderr, "_cj_install: jax_l = %d, i_w = %d, cos_c = %s\n", jax_l, i_w, kid_u->cos_c);
+#endif
+
         kid_u->jax_l = jax_l;
         ray_u[jax_l++] = *kid_u;
 
+indent += 2;
         jax_l = _cj_install(ray_u, jax_l, kid_u->dev_u);
+indent -= 2;
       }
     }
     return jax_l;
