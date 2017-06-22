@@ -46,15 +46,16 @@
   |=  {title/@ta x/@s y/@s w/@s h/@s flags/@uF}
   ^-  @s                                                :: needs to be a pointer
   ~&  [%create-window title x y w h flags]
-  -1                                                   :: ibid
+  -1                                                    :: same
 
 ::  void SDL_DestroyWindow(SDL_Window* window)
 ::
 ++  destroy-window
   ~/  %destroy-window
-  |=  flags/@u                                          :: mold is a stub
-  ^-  @s
-  -1
+  |=  window/@s                                         :: needs to be a pointer
+  ^-  $~
+  ::  ~&  [%destroy-window window]
+  ~
 
 ::::
 ::::  http://wiki.libsdl.org/CategoryRender
@@ -66,20 +67,25 @@
 ::
 ++  create-renderer
   ~/  %create-renderer
-  |=  flags/@u                                          :: mold is a stub
-  ^-  @s
-  -1
+  |=  {window/@s index/@s flags/@uF}                    :: window needs to be a pointer
+  ^-  @s                                                :: needs to be a pointer
+  ~&  [%create-renderer window index flags]
+  -1                                                    :: same
 
-::
-::  XXX
+::  void SDL_DestroyRenderer(SDL_Renderer* renderer)
 ::
 ++  destroy-renderer
   ~/  %destroy-renderer
-  |=  flags/@u                                          :: mold is a stub
-  ^-  @s
-  -1
+  |=  renderer/@s                                        :: needs to be a pointer
+  ^-  $~
+  ::  ~&  [%destroy-renderer renderer]
+  ~
 
-
+::  int SDL_SetRenderDrawColor(SDL_Renderer* renderer,
+::                             Uint8         r,
+::                             Uint8         g,
+::                             Uint8         b,
+::                             Uint8         a)
 ::
 ++  set-render-draw-color
   ~/  %set-render-draw-color
@@ -87,26 +93,31 @@
   ^-  @s
   -1
 
-
-
+::  int SDL_RenderClear(SDL_Renderer* renderer)
+::
 ++  render-clear
   ~/  %render-clear
   |=  flags/@u                                          :: mold is a stub
   ^-  @s
   -1
 
+::  int SDL_RenderFillRect(SDL_Renderer*   renderer,
+::                         const SDL_Rect* rect)
+::
+++  render-fill-rect
+  ~/  %render-fill-rect
+  |=  flags/@u                                          :: mold is a stub
+  ^-  @s
+  -1
+
+::  void SDL_RenderPresent(SDL_Renderer* renderer)
+::
 ++  render-present
   ~/  %render-present
   |=  flags/@u                                          :: mold is a stub
   ^-  @s
   -1
 
-
-
-++  render-fill-rect
-  ~/  %render-fill-rect
-  |=  flags/@u                                          :: mold is a stub
-  ^-  @s
-  -1
+::  DELAY
 
 --

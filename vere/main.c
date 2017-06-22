@@ -482,9 +482,9 @@ main(c3_i   argc,
         rec.x = 320; rec.y = 200; rec.w = 200; rec.h = 200;
         SDL_RenderFillRect(ren, &rec);
         SDL_RenderPresent(ren);
-		printf("SDL_Delay() 10 seconds..");
+		printf("SDL_Delay() 5 seconds..");
 		fflush(stdout);
-		SDL_Delay(10000);
+		SDL_Delay(5000);
 		printf("\n");
         SDL_DestroyRenderer(ren);
       }

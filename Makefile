@@ -548,7 +548,8 @@ distclean: clean $(LIBUV_MAKEFILE)
 
 .PHONY: clean debbuild debinstalldistclean etags osxpackage tags
 
-$(MOUNTED_DESK)/%: ../ARVO/%
+## $(MOUNTED_DESK)/%: ../ARVO/%
+$(MOUNTED_DESK)/%: arvo/%
 	cp $< $@
 
 sync: $(ARVO_SYNCS)
