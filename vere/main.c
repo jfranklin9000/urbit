@@ -453,6 +453,9 @@ main(c3_i   argc,
   SDL_Window *win;
   SDL_Renderer *ren;
   SDL_Rect rec;
+  // printf("SDL_INIT_VIDEO = 0x%08x\n", SDL_INIT_VIDEO);
+  // printf("SDL_WINDOWPOS_UNDEFINED = %d\n", SDL_WINDOWPOS_UNDEFINED);
+  // printf("SDL_INIT_VIDEO = 0x%08x\n", SDL_WINDOW_SHOWN);
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     printf("SDL_Init Error: %s\n", SDL_GetError());
   } else {

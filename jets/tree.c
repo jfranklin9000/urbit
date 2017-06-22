@@ -484,11 +484,26 @@ static u3j_core _zuse_d[] =
 static u3j_harm _sdl_init_a[] = {{".2", sdl_init, c3y}, {}};
 static u3j_harm _sdl_quit_a[] = {{".2", sdl_quit, c3y}, {}};
 static u3j_harm _sdl_create_window_a[] = {{".2", sdl_create_window, c3y}, {}};
+static u3j_harm _sdl_destroy_window_a[] = {{".2", sdl_destroy_window, c3y}, {}};
+static u3j_harm _sdl_create_renderer_a[] = {{".2", sdl_create_renderer, c3y}, {}};
+static u3j_harm _sdl_destroy_renderer_a[] = {{".2", sdl_destroy_renderer, c3y}, {}};
+static u3j_harm _sdl_set_render_draw_color_a[] = {{".2", sdl_set_render_draw_color, c3y}, {}};
+static u3j_harm _sdl_render_clear_a[] = {{".2", sdl_render_clear, c3y}, {}};
+static u3j_harm _sdl_render_fill_rect_a[] = {{".2", sdl_render_fill_rect, c3y}, {}};
+static u3j_harm _sdl_render_present_a[] = {{".2", sdl_render_present, c3y}, {}};
 
 static u3j_core _sdl_d[] =
   { { "init", _sdl_init_a },
     { "quit", _sdl_quit_a },
-    { "create_window", _sdl_create_window_a },
+    { "create-window", _sdl_create_window_a },
+    { "destroy-window", _sdl_destroy_window_a },
+    { "create-renderer", _sdl_create_renderer_a },
+    { "destroy-renderer", _sdl_destroy_renderer_a },
+    { "set-render-draw-color", _sdl_set_render_draw_color_a },
+    { "render-clear", _sdl_render_clear_a },
+    { "render-fill-rect", _sdl_render_fill_rect_a },
+    { "render-present", _sdl_render_present_a },
+    // delay
     {}
   };
 
