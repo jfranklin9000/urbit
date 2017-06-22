@@ -481,9 +481,21 @@ static u3j_core _zuse_d[] =
   };
 */
 
+static u3j_harm _sdl_init_a[] = {{".2", sdl_init, c3y}, {}};
+static u3j_harm _sdl_quit_a[] = {{".2", sdl_quit, c3y}, {}};
+static u3j_harm _sdl_create_window_a[] = {{".2", sdl_create_window, c3y}, {}};
+
+static u3j_core _sdl_d[] =
+  { { "init", _sdl_init_a },
+    { "quit", _sdl_quit_a },
+    { "create_window", _sdl_create_window_a },
+    {}
+  };
+
 static u3j_core _arvo_d[] =
   { { "down", 0, _down_d },
     { "aes", 0, _zuse__aes_d },
+    { "sdl", 0, _sdl_d },
     {}
   };
 

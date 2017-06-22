@@ -342,6 +342,7 @@ J_OFILES=\
        $(J_F_OFILES) \
        $(J_F_OFILES_UT) \
        $(J_G_OFILES) \
+       jets/sdl/sdl.o \
        jets/tree.o
 
 BASE_OFILES=$(N_OFILES) $(J_OFILES)
@@ -419,6 +420,13 @@ TAGS=\
        .etags \
        GPATH GTAGS GRTAGS \
        cscope.in.out cscope.po.out cscope.out
+
+# hardwired path, hardwired ship name, hardwired desk
+MOUNTED_DESK=../PLANETS/dolnyd-pastyr/home
+
+ARVO_SYNCS=\
+	$(MOUNTED_DESK)/app/sdl-test.hoon \
+	$(MOUNTED_DESK)/lib/sdl.hoon
 
 all: urbit
 
@@ -539,3 +547,11 @@ distclean: clean $(LIBUV_MAKEFILE)
 	$(MAKE) -C outside/SDL2-2.0.5 clean
 
 .PHONY: clean debbuild debinstalldistclean etags osxpackage tags
+
+$(MOUNTED_DESK)/%: ../ARVO/%
+	cp $< $@
+
+sync: $(ARVO_SYNCS)
+
+#sync-rm:
+#	rm -f $(ARVO_SYNCS)
