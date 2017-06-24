@@ -52,17 +52,16 @@
   ::  ~&  [%create-window title x y w h flags]
   0x0  :: non-jet: fail
 
-
-
-
 ::  void SDL_DestroyWindow(SDL_Window* window)
 ::
 ++  destroy-window
   ~/  %destroy-window
-  |=  window/@s                                         :: needs to be a pointer
+  |=  window/@uxG
   ^-  $~
   ::  ~&  [%destroy-window window]
-  ~
+  ~ :: non-jet: void
+
+
 
 ::::
 ::::  http://wiki.libsdl.org/CategoryRender
@@ -73,7 +72,7 @@
 ::                                   Uint32      flags)
 ::
 ++  create-renderer
-  ~/  %create-renderer
+::::  ~/  %create-renderer
   |=  {window/@s index/@s flags/@uF}                    :: window needs to be a pointer
   ^-  @s                                                :: needs to be a pointer
   ~&  [%create-renderer window index flags]

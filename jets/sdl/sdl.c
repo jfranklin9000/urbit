@@ -57,7 +57,7 @@ sdl_quit(u3_noun cor)
   return SDL_Quit(), 0;
 }
 
-u3_noun													// fix me
+u3_noun
 sdl_create_window(u3_noun cor)
 {
   u3_noun title, x, y, w, h, flags;
@@ -70,31 +70,28 @@ sdl_create_window(u3_noun cor)
 
   x = pats2int(x); y = pats2int(y); w = pats2int(w); h = pats2int(h);
 
-  printf("\n\rtitle = %s, x = %d, y = %d, w = %d, h = %d, flags = 0x%08x\n\r",
-    ttl, x, y, w, h, flags);
+  // printf("\n\rtitle = %s, x = %d, y = %d, w = %d, h = %d, flags = 0x%08x\n\r",
+  //   ttl, x, y, w, h, flags);
 
   win = SDL_CreateWindow(ttl, x, y, w, h, flags);
 
-  printf("win = %p\n\r", win);
+  printf("\n\rcreate: win = %p\n\r", win);
 
-//  SDL_DestroyWindow(win);
-
-  return -1;
+  return u3i_chubs(1, (c3_d *) &win);
 }
 
-u3_noun													// fix me
+u3_noun
 sdl_destroy_window(u3_noun cor)
 {
   u3_noun window;
   SDL_Window *win;
 
   window = u3r_at(u3x_sam_1, cor);
-  win = (SDL_Window *) window;
-  printf("\n\rwindow = %p\n", win);       // fix type (pointer)
+  win = (SDL_Window *) u3r_chub(0, window);
 
-return 0;  // until sdl_create_window() works (bail: oops)
+  printf("\n\rdestroy: win = %p\n", win);
 
-  return SDL_DestroyWindow(win), 0;       // and here
+  return SDL_DestroyWindow(win), 0;
 }
 
 u3_noun													// fix me

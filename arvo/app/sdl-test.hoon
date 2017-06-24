@@ -4,12 +4,13 @@
 ::  SDL_WINDOW_SHOWN         0x4
 ::  SDL_WINDOWPOS_UNDEFINED  536.805.376
 
+::  %proggy
 ::  :sdl-test [%init 0x20]
 ::  :sdl-test [%create-window %sdl --536.805.376 --536.805.376 --640 --480 0x4]
-::  :sdl-test [%create-renderer --777 -1 0]             :: window = --777 :: fix
+::  :sdl-test [%create-renderer <window> -1 0]
 
-::  :sdl-test [%destroy-renderer --888]                 :: renderer = --888 :: fix
-::  :sdl-test [%destroy-window --777]                   :: window = --777 :: fix
+::  :sdl-test [%destroy-renderer <renderer>]
+::  :sdl-test [%destroy-window <window>]
 ::  :sdl-test [%quit ~]
 
 /+  sdl                                                 :: /hoon/sdl/lib
@@ -26,7 +27,7 @@
   $%  {$init flags/@uF}
       {$quit $~}
       {$create-window title/@ta x/@s y/@s w/@s h/@s flags/@uF}
-      {$destroy-window window/@s}                       :: needs to be a pointer
+      {$destroy-window window/@uxG}
       {$create-renderer window/@s index/@s flags/@uF}   :: window needs to be pointer
       {$destroy-renderer renderer/@s}                   :: needs to be a pointer
       ::
@@ -76,10 +77,13 @@
       ~&  [%sdl-init-error result]
       [~ +>.$]
     :: create window (title should be 4 characters or less please)
-    =+  win=(create-window:sdl %prog --536.805.376 --536.805.376 --640 --480 0x4)     :: add /@u ?
+    =+  win=(create-window:sdl %prog --536.805.376 --536.805.376 --640 --480 0x4)
     ?:  =(win 0x0)
       ~&  [%sdl-create-window-error win]
       [~ +>.$]
+
+    ~&  [%destroy (destroy-window:sdl win)]
+
     [~ +>.$]
   ==
 
