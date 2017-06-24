@@ -8,7 +8,7 @@
 
 ::  @uxG is used for pointers
 
-~%  %sdl  ..is  ~ 
+~%  %sdl  ..is  ~                                       :: jetted, no ~& output
 
 |%
 
@@ -22,7 +22,7 @@
   ~/  %init
   |=  flags/@uF
   ^-  @s
-  ::  ~&  [%init flags]
+  ~&  [%init flags]
   --0  :: non-jet: success
 
 ::  void SDL_Quit(void)
@@ -31,7 +31,7 @@
   ~/  %quit
   |=  $~
   ^-  $~
-  ::  ~&  [%quit ~]
+  ~&  [%quit ~]
   ~  :: non-jet: void
 
 ::::
@@ -58,10 +58,8 @@
   ~/  %destroy-window
   |=  window/@uxG
   ^-  $~
-  ::  ~&  [%destroy-window window]
-  ~ :: non-jet: void
-
-
+  ~&  [%destroy-window window]
+  ~  :: non-jet: void
 
 ::::
 ::::  http://wiki.libsdl.org/CategoryRender
@@ -72,20 +70,22 @@
 ::                                   Uint32      flags)
 ::
 ++  create-renderer
-::::  ~/  %create-renderer
-  |=  {window/@s index/@s flags/@uF}                    :: window needs to be a pointer
-  ^-  @s                                                :: needs to be a pointer
+  ~/  %create-renderer
+  |=  {window/@uxG index/@s flags/@uF}
+  ^-  @uxG
   ~&  [%create-renderer window index flags]
-  -1                                                    :: same
+  0x0  :: non-jet: fail
 
 ::  void SDL_DestroyRenderer(SDL_Renderer* renderer)
 ::
 ++  destroy-renderer
   ~/  %destroy-renderer
-  |=  renderer/@s                                        :: needs to be a pointer
+  |=  renderer/@uxG
   ^-  $~
-  ::  ~&  [%destroy-renderer renderer]
-  ~
+  ~&  [%destroy-renderer renderer]
+  ~ :: non-jet: void
+
+
 
 ::  int SDL_SetRenderDrawColor(SDL_Renderer* renderer,
 ::                             Uint8         r,

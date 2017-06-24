@@ -94,31 +94,42 @@ sdl_destroy_window(u3_noun cor)
   return SDL_DestroyWindow(win), 0;
 }
 
-u3_noun													// fix me
+u3_noun
 sdl_create_renderer(u3_noun cor)
 {
   u3_noun window, index, flags;
+  SDL_Window *win;
+  SDL_Renderer *ren;
 
-  u3r_mean(cor, u3x_sam_2, &window, u3x_sam_6, &index, u3x_sam_7, &flags, 0);
+  u3x_trel(u3r_at(u3x_sam, cor), &window, &index, &flags);
 
-  printf("\n\rwindow = %p, index = %d, flags = 0x%08x\n", window, index, flags);
+  win = (SDL_Window *) u3r_chub(0, window);
 
-  return -1;
+  index = pats2int(index);
+
+  // printf("\n\rwin = %p, index = %d, flags = 0x%08x\n", win, index, flags);
+
+  ren = SDL_CreateRenderer(win, index, flags);
+
+  printf("\n\rcreate: ren = %p\n\r", ren);
+
+  return u3i_chubs(1, (c3_d *) &ren);
 }
 
-u3_noun													// fix me
+u3_noun
 sdl_destroy_renderer(u3_noun cor)
 {
   u3_noun renderer;
   SDL_Renderer *ren;
 
   renderer = u3r_at(u3x_sam_1, cor);
-  ren = (SDL_Renderer *) renderer;
-  printf("\n\rrenderer = %p\n", ren);       // fix type (pointer)
+  ren = (SDL_Renderer *) u3r_chub(0, renderer);
 
-return 0;  // until sdl_create_renderer() works (bail: oops)
+  printf("\n\rdestroy: ren = %p\n", ren);
 
-  return SDL_DestroyRenderer(ren), 0;       // and here
+SDL_Delay(5000);
+
+  return SDL_DestroyRenderer(ren), 0;
 }
 
 u3_noun

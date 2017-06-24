@@ -28,13 +28,11 @@
       {$quit $~}
       {$create-window title/@ta x/@s y/@s w/@s h/@s flags/@uF}
       {$destroy-window window/@uxG}
-      {$create-renderer window/@s index/@s flags/@uF}   :: window needs to be pointer
-      {$destroy-renderer renderer/@s}                   :: needs to be a pointer
+      {$create-renderer window/@uxG index/@s flags/@uF}
+      {$destroy-renderer renderer/@uxG}
       ::
       {$proggy $~}
   ==
-
-:: SDL_GetError ?
 
 --                                                      :: end molds
 
@@ -81,6 +79,10 @@
     ?:  =(win 0x0)
       ~&  [%sdl-create-window-error win]
       [~ +>.$]
+
+    =+  ren=(create-renderer:sdl win -1 0x0)
+
+    ~&  [%destroy (destroy-renderer:sdl ren)]
 
     ~&  [%destroy (destroy-window:sdl win)]
 
