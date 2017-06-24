@@ -64,7 +64,7 @@ sdl_create_window(u3_noun cor)
   char ttl[5] = {0}; // 4 characters + '\0'
   SDL_Window *win;
 
-  u3x_hext(u3r_at(u3x_sam_1, cor), &title, &x, &y, &w, &h, &flags);
+  u3x_hext(u3r_at(u3x_sam, cor), &title, &x, &y, &w, &h, &flags);
 
   strncpy(ttl, (char *) &title, 4);
 
@@ -86,7 +86,7 @@ sdl_destroy_window(u3_noun cor)
   u3_noun window;
   SDL_Window *win;
 
-  window = u3r_at(u3x_sam_1, cor);
+  window = u3r_at(u3x_sam, cor);
   win = (SDL_Window *) u3r_chub(0, window);
 
   printf("\n\rdestroy-window: win = %p\n", win);
@@ -122,7 +122,7 @@ sdl_destroy_renderer(u3_noun cor)
   u3_noun renderer;
   SDL_Renderer *ren;
 
-  renderer = u3r_at(u3x_sam_1, cor);
+  renderer = u3r_at(u3x_sam, cor);
   ren = (SDL_Renderer *) u3r_chub(0, renderer);
 
   printf("\n\rdestroy-renderer: ren = %p\n", ren);
@@ -138,8 +138,6 @@ sdl_set_render_draw_color(u3_noun cor)
   u3_noun renderer, r, g, b, a;
   SDL_Renderer *ren;
 
-//u3_noun retval;
-
   u3x_quil(u3r_at(u3x_sam, cor), &renderer, &r, &g, &b, &a);
 
   ren = (SDL_Renderer *) u3r_chub(0, renderer);
@@ -147,13 +145,6 @@ sdl_set_render_draw_color(u3_noun cor)
   printf("\n\rset-render-draw-color: ren = %p, r = 0x%02x, g = 0x%02x, b = 0x%02x, a = 0x%02x\n\r",
     ren, r, g, b, a);
 
-/*
-retval = int2pats(SDL_SetRenderDrawColor(ren, r, g, b, a));
-SDL_RenderClear(ren);
-SDL_RenderPresent(ren);
-
-  return retval; // int2pats(SDL_SetRenderDrawColor(ren, r, g, b, a));
-*/
   return int2pats(SDL_SetRenderDrawColor(ren, r, g, b, a));
 }
 
@@ -163,23 +154,35 @@ sdl_render_clear(u3_noun cor)
   u3_noun renderer;
   SDL_Renderer *ren;
 
-u3_noun retval;
-
-  renderer = u3r_at(u3x_sam_1, cor);
+  renderer = u3r_at(u3x_sam, cor);
   ren = (SDL_Renderer *) u3r_chub(0, renderer);
 
   printf("\n\rrender-clear: ren = %p\n", ren);
 
-retval = int2pats(SDL_RenderClear(ren));
-SDL_RenderPresent(ren);
-
-  return retval; // int2pats(SDL_RenderClear(ren));
+  return int2pats(SDL_RenderClear(ren));
 }
 
 u3_noun
 sdl_render_fill_rect(u3_noun cor)
 {
-  return -1;
+  u3_noun renderer, rect;
+  SDL_Renderer *ren;
+  // SDL_Rect
+
+  u3x_cell(u3r_at(u3x_sam, cor), &renderer, &rect);
+
+  ren = (SDL_Renderer *) u3r_chub(0, renderer);
+
+  printf("\n\rrender-fill-rect: ren = %p\n", ren);
+
+u3_noun retval;
+
+ // do stuff
+
+//retval = int2pats(SDL_RenderFillRect(ren, x, y, w, h));
+SDL_RenderPresent(ren);
+
+  return 0; // retval; // int2pats(SDL_RenderFillRect(ren, x, y, w, h));
 }
 
 u3_noun

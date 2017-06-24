@@ -113,9 +113,10 @@
 ::
 ++  render-fill-rect
   ~/  %render-fill-rect
-  |=  flags/@u                                          :: mold is a stub
+  |=  {renderer/@uxG rect/{x/@s y/@s w/@s h/@s}}  ::
   ^-  @s
-  -1
+  ~&  [%render-fill-rect renderer rect]
+  --0  :: non-jet: success
 
 
 ::  void SDL_RenderPresent(SDL_Renderer* renderer)
