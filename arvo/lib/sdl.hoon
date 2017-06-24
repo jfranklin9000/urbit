@@ -47,7 +47,7 @@
 ::
 ++  create-window
   ~/  %create-window
-  |=  {title/@ta x/@s y/@s w/@s h/@s flags/@uF}
+  |=  {title/@ta x/@s y/@s w/@s h/@s flags/@uF}              :: add x to flags
   ^-  @uxG
   ::  ~&  [%create-window title x y w h flags]
   0x0  :: non-jet: fail
@@ -83,8 +83,7 @@
   |=  renderer/@uxG
   ^-  $~
   ~&  [%destroy-renderer renderer]
-  ~ :: non-jet: void
-
+  ~  :: non-jet: void
 
 
 ::  int SDL_SetRenderDrawColor(SDL_Renderer* renderer,
@@ -95,9 +94,11 @@
 ::
 ++  set-render-draw-color
   ~/  %set-render-draw-color
-  |=  flags/@u                                          :: mold is a stub
+  |=  {renderer/@uxG r/@uxD g/@uxD b/@uxD a/@uxD}
   ^-  @s
-  -1
+  ~&  [%set-render-draw-color renderer r g b a]
+  --0  :: non-jet: success
+
 
 ::  int SDL_RenderClear(SDL_Renderer* renderer)
 ::

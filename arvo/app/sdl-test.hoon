@@ -9,6 +9,8 @@
 ::  :sdl-test [%create-window %sdl --536.805.376 --536.805.376 --640 --480 0x4]
 ::  :sdl-test [%create-renderer <window> -1 0]
 
+::  :sdl-test [%set-render-draw-color <renderer> 0x80 0x80 0x80 0xff]
+
 ::  :sdl-test [%destroy-renderer <renderer>]
 ::  :sdl-test [%destroy-window <window>]
 ::  :sdl-test [%quit ~]
@@ -30,6 +32,7 @@
       {$destroy-window window/@uxG}
       {$create-renderer window/@uxG index/@s flags/@uF}
       {$destroy-renderer renderer/@uxG}
+      {$set-render-draw-color renderer/@uxG r/@uxD g/@uxD b/@uxD a/@uxD}
       ::
       {$proggy $~}
   ==
@@ -67,6 +70,10 @@
     =+  result=(destroy-renderer:sdl renderer.command)
     ~&  [%result result]
     [~ +>.$]
+  {$set-render-draw-color *}
+    =+  result=(set-render-draw-color:sdl renderer.command r.command g.command b.command a.command)
+    ~&  [%result result]
+    [~ +>.$]
   ::
   {$proggy $~}
     :: init sdl
@@ -79,12 +86,15 @@
     ?:  =(win 0x0)
       ~&  [%sdl-create-window-error win]
       [~ +>.$]
-
     =+  ren=(create-renderer:sdl win -1 0x0)
 
-    ~&  [%destroy (destroy-renderer:sdl ren)]
+=+  result2=(set-render-draw-color:sdl ren 0x80 0x80 0x80 0xff)
+  ~&  [%result2 result2]
 
-    ~&  [%destroy (destroy-window:sdl win)]
+    ::  what's a better way to do these?
+    ~&  [%destroy-renderer (destroy-renderer:sdl ren)]
+    ~&  [%destroy-window (destroy-window:sdl win)]
+    ~&  [%quit (quit:sdl ~)]
 
     [~ +>.$]
   ==

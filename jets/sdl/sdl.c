@@ -135,7 +135,23 @@ SDL_Delay(5000);
 u3_noun
 sdl_set_render_draw_color(u3_noun cor)
 {
-  return -1;
+  u3_noun renderer, r, g, b, a;
+  SDL_Renderer *ren;
+
+u3_noun retval;
+
+  u3x_quil(u3r_at(u3x_sam, cor), &renderer, &r, &g, &b, &a);
+
+  ren = (SDL_Renderer *) u3r_chub(0, renderer);
+
+  printf("\n\rdraw color: ren = %p, r = 0x%0x2, g = 0x%0x2, b = 0x%0x2, a = 0x%0x2\n\r",
+    ren, r, g, b, a);
+
+retval = int2pats(SDL_SetRenderDrawColor(ren, r, g, b, a));
+SDL_RenderClear(ren);
+SDL_RenderPresent(ren);
+
+  return retval; // int2pats(SDL_SetRenderDrawColor(ren, r, g, b, a));
 }
 
 u3_noun
