@@ -29,7 +29,11 @@
       {$destroy-window window/@s}                       :: needs to be a pointer
       {$create-renderer window/@s index/@s flags/@uF}   :: window needs to be pointer
       {$destroy-renderer renderer/@s}                   :: needs to be a pointer
+      ::
+      {$proggy $~}
   ==
+
+:: SDL_GetError ?
 
 --                                                      :: end molds
 
@@ -65,6 +69,18 @@
     ~&  [%result result]
     [~ +>.$]
   ::
+  {$proggy $~}
+    :: init sdl
+    =+  result=(init:sdl 0x20)           :: combine..
+    ?:  !=(result --0)                   :: ..with this?
+      ~&  [%sdl-init-error result]
+      [~ +>.$]
+    :: create window (title should be 4 characters or less please)
+    =+  win=(create-window:sdl %prog --536.805.376 --536.805.376 --640 --480 0x4)     :: add /@u ?
+    ?:  =(win 0x0)
+      ~&  [%sdl-create-window-error win]
+      [~ +>.$]
+    [~ +>.$]
   ==
 
 --                                                      :: end core

@@ -1,8 +1,12 @@
 ::  ~dirwex-dosrev
 
+::  ~dirwex-dosrev
+
 ::::
 ::::  http://wiki.libsdl.org
 ::::
+
+::  @uxG is used for pointers
 
 ~%  %sdl  ..is  ~ 
 
@@ -19,7 +23,7 @@
   |=  flags/@uF
   ^-  @s
   ::  ~&  [%init flags]
-  -1
+  --0  :: non-jet: success
 
 ::  void SDL_Quit(void)
 ::
@@ -28,7 +32,7 @@
   |=  $~
   ^-  $~
   ::  ~&  [%quit ~]
-  ~
+  ~  :: non-jet: void
 
 ::::
 ::::  http://wiki.libsdl.org/CategoryVideo
@@ -44,9 +48,12 @@
 ++  create-window
   ~/  %create-window
   |=  {title/@ta x/@s y/@s w/@s h/@s flags/@uF}
-  ^-  @s                                                :: needs to be a pointer
-  ~&  [%create-window title x y w h flags]
-  -1                                                    :: same
+  ^-  @uxG
+  ::  ~&  [%create-window title x y w h flags]
+  0x0  :: non-jet: fail
+
+
+
 
 ::  void SDL_DestroyWindow(SDL_Window* window)
 ::

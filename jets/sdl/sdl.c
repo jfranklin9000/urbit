@@ -1,21 +1,58 @@
 #include <SDL.h>
 #include "all.h"
 
+/*
+  ++  new  |=  {a/? b/@}                                ::  [sign value] to @s
+           `@s`?:(a (mul 2 b) ?:(=(0 b) 0 +((mul 2 (dec b)))))
+*/
+
+static int tc(int n)    // two's complement
+{
+  return ~n + 1;
+}
+
+// there's probably already a function that does this
+// (this function, and its callers, assume direct atoms)
+static int
+pats2int(u3_atom a)    // @s to int
+{
+  if (a == 0)
+    return 0;
+  else if (!(a & 1))    // no sign bit
+    return a / 2;
+  else
+    return tc((a + 1) / 2);
+}
+
+// same as above
+static u3_atom
+int2pats(int i)    // int to @s
+{
+  if (i == 0)
+    return 0;
+  else if (!(i & 0x80000000))    // no sign bit
+    return i * 2;
+  else
+    return 2 * (tc(i) - 1) + 1;
+}
+
+// do transfer/retain analysis
+
 u3_noun
 sdl_init(u3_noun cor)
 {
   u3_noun flags;
 
-  flags = u3r_at(u3x_sam_1, cor);
-  // printf("\n\rflags = 0x%08x\n", flags);
+  flags = u3r_at(u3x_sam, cor);
+  // printf("\n\rflags = 0x%08x\n\r", flags);
 
-  return SDL_Init(flags);
+  return int2pats(SDL_Init(flags));
 }
 
 u3_noun
 sdl_quit(u3_noun cor)
 {
-  // printf("\n\rSDL_Quit()\n");
+  // printf("\n\rSDL_Quit()\n\r");
 
   return SDL_Quit(), 0;
 }
@@ -24,17 +61,23 @@ u3_noun													// fix me
 sdl_create_window(u3_noun cor)
 {
   u3_noun title, x, y, w, h, flags;
+  char ttl[5] = {0}; // 4 characters + '\0'
+  SDL_Window *win;
 
-/*
-  title = u3r_at(u3x_sam_2, cor);
-  x     = u3r_at(u3x_sam_6, cor);
-  y     = u3r_at(u3x_sam_7, cor);
-*/
-  u3r_mean(cor, u3x_sam_1, &title, u3x_sam_2, &x, u3x_sam_3, &y, 0);
-  u3r_mean(cor, u3x_sam_4, &w, u3x_sam_5, &h, u3x_sam_6, &flags, 0);
+  u3x_hext(u3r_at(u3x_sam_1, cor), &title, &x, &y, &w, &h, &flags);
 
-  printf("\n\rtitle = %d, x = %d, y = %d, w = %d, h = %d, flags = 0x%08x\n",
-    title, x, y, w, h, flags);
+  strncpy(ttl, (char *) &title, 4);
+
+  x = pats2int(x); y = pats2int(y); w = pats2int(w); h = pats2int(h);
+
+  printf("\n\rtitle = %s, x = %d, y = %d, w = %d, h = %d, flags = 0x%08x\n\r",
+    ttl, x, y, w, h, flags);
+
+  win = SDL_CreateWindow(ttl, x, y, w, h, flags);
+
+  printf("win = %p\n\r", win);
+
+//  SDL_DestroyWindow(win);
 
   return -1;
 }
