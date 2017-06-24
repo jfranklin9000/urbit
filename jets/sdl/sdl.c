@@ -44,7 +44,7 @@ sdl_init(u3_noun cor)
   u3_noun flags;
 
   flags = u3r_at(u3x_sam, cor);
-  // printf("\n\rflags = 0x%08x\n\r", flags);
+  printf("\n\rinit: flags = 0x%08x\n\r", flags);
 
   return int2pats(SDL_Init(flags));
 }
@@ -70,12 +70,12 @@ sdl_create_window(u3_noun cor)
 
   x = pats2int(x); y = pats2int(y); w = pats2int(w); h = pats2int(h);
 
-  // printf("\n\rtitle = %s, x = %d, y = %d, w = %d, h = %d, flags = 0x%08x\n\r",
-  //   ttl, x, y, w, h, flags);
+  printf("\n\rcreate-window: title = %s, x = %d, y = %d, w = %d, h = %d, flags = 0x%08x\n\r",
+    ttl, x, y, w, h, flags);
 
   win = SDL_CreateWindow(ttl, x, y, w, h, flags);
 
-  printf("\n\rcreate: win = %p\n\r", win);
+  printf("\n\rcreate-window: win = %p\n\r", win);
 
   return u3i_chubs(1, (c3_d *) &win);
 }
@@ -89,7 +89,7 @@ sdl_destroy_window(u3_noun cor)
   window = u3r_at(u3x_sam_1, cor);
   win = (SDL_Window *) u3r_chub(0, window);
 
-  printf("\n\rdestroy: win = %p\n", win);
+  printf("\n\rdestroy-window: win = %p\n", win);
 
   return SDL_DestroyWindow(win), 0;
 }
@@ -107,11 +107,11 @@ sdl_create_renderer(u3_noun cor)
 
   index = pats2int(index);
 
-  // printf("\n\rwin = %p, index = %d, flags = 0x%08x\n", win, index, flags);
+  printf("\n\rcreate-renderer: win = %p, index = %d, flags = 0x%08x\n", win, index, flags);
 
   ren = SDL_CreateRenderer(win, index, flags);
 
-  printf("\n\rcreate: ren = %p\n\r", ren);
+  printf("\n\rcreate-renderer: ren = %p\n\r", ren);
 
   return u3i_chubs(1, (c3_d *) &ren);
 }
@@ -125,7 +125,7 @@ sdl_destroy_renderer(u3_noun cor)
   renderer = u3r_at(u3x_sam_1, cor);
   ren = (SDL_Renderer *) u3r_chub(0, renderer);
 
-  printf("\n\rdestroy: ren = %p\n", ren);
+  printf("\n\rdestroy-renderer: ren = %p\n", ren);
 
 SDL_Delay(5000);
 
@@ -144,7 +144,7 @@ u3_noun retval;
 
   ren = (SDL_Renderer *) u3r_chub(0, renderer);
 
-  printf("\n\rdraw color: ren = %p, r = 0x%0x2, g = 0x%0x2, b = 0x%0x2, a = 0x%0x2\n\r",
+  printf("\n\rset-render-draw-color: ren = %p, r = 0x%02x, g = 0x%02x, b = 0x%02x, a = 0x%02x\n\r",
     ren, r, g, b, a);
 
 retval = int2pats(SDL_SetRenderDrawColor(ren, r, g, b, a));

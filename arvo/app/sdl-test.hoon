@@ -7,7 +7,7 @@
 ::  %proggy
 ::  :sdl-test [%init 0x20]
 ::  :sdl-test [%create-window %sdl --536.805.376 --536.805.376 --640 --480 0x4]
-::  :sdl-test [%create-renderer <window> -1 0]
+::  :sdl-test [%create-renderer <window> -1 0x0]
 
 ::  :sdl-test [%set-render-draw-color <renderer> 0x80 0x80 0x80 0xff]
 
@@ -26,11 +26,11 @@
 
 ::  app commands
 ++  command
-  $%  {$init flags/@uF}
+  $%  {$init flags/@uxF}
       {$quit $~}
-      {$create-window title/@ta x/@s y/@s w/@s h/@s flags/@uF}
+      {$create-window title/@ta x/@s y/@s w/@s h/@s flags/@uxF}
       {$destroy-window window/@uxG}
-      {$create-renderer window/@uxG index/@s flags/@uF}
+      {$create-renderer window/@uxG index/@s flags/@uxF}
       {$destroy-renderer renderer/@uxG}
       {$set-render-draw-color renderer/@uxG r/@uxD g/@uxD b/@uxD a/@uxD}
       ::
@@ -88,8 +88,11 @@
       [~ +>.$]
     =+  ren=(create-renderer:sdl win -1 0x0)
 
-=+  result2=(set-render-draw-color:sdl ren 0x80 0x80 0x80 0xff)
-  ~&  [%result2 result2]
+    ::  how to reuse result?
+    =+  result2=(set-render-draw-color:sdl ren 0x80 0x80 0x80 0xff)
+    ?:  !=(result2 --0)
+      ~&  [%sdl-set-render-draw-color-error result2]
+      [~ +>.$]
 
     ::  what's a better way to do these?
     ~&  [%destroy-renderer (destroy-renderer:sdl ren)]

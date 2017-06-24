@@ -20,7 +20,7 @@
 ::
 ++  init
   ~/  %init
-  |=  flags/@uF
+  |=  flags/@uxF
   ^-  @s
   ~&  [%init flags]
   --0  :: non-jet: success
@@ -47,7 +47,7 @@
 ::
 ++  create-window
   ~/  %create-window
-  |=  {title/@ta x/@s y/@s w/@s h/@s flags/@uF}              :: add x to flags
+  |=  {title/@ta x/@s y/@s w/@s h/@s flags/@uxF}
   ^-  @uxG
   ::  ~&  [%create-window title x y w h flags]
   0x0  :: non-jet: fail
@@ -71,7 +71,7 @@
 ::
 ++  create-renderer
   ~/  %create-renderer
-  |=  {window/@uxG index/@s flags/@uF}
+  |=  {window/@uxG index/@s flags/@uxF}
   ^-  @uxG
   ~&  [%create-renderer window index flags]
   0x0  :: non-jet: fail
