@@ -85,7 +85,6 @@
   ~&  [%destroy-renderer renderer]
   ~  :: non-jet: void
 
-
 ::  int SDL_SetRenderDrawColor(SDL_Renderer* renderer,
 ::                             Uint8         r,
 ::                             Uint8         g,
@@ -99,14 +98,15 @@
   ~&  [%set-render-draw-color renderer r g b a]
   --0  :: non-jet: success
 
-
 ::  int SDL_RenderClear(SDL_Renderer* renderer)
 ::
 ++  render-clear
   ~/  %render-clear
-  |=  flags/@u                                          :: mold is a stub
+  |=  renderer/@uxG
   ^-  @s
-  -1
+  ~&  [%render-clear renderer]
+  --0  :: non-jet: success
+
 
 ::  int SDL_RenderFillRect(SDL_Renderer*   renderer,
 ::                         const SDL_Rect* rect)
@@ -116,6 +116,7 @@
   |=  flags/@u                                          :: mold is a stub
   ^-  @s
   -1
+
 
 ::  void SDL_RenderPresent(SDL_Renderer* renderer)
 ::

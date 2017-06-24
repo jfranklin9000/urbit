@@ -33,6 +33,7 @@
       {$create-renderer window/@uxG index/@s flags/@uxF}
       {$destroy-renderer renderer/@uxG}
       {$set-render-draw-color renderer/@uxG r/@uxD g/@uxD b/@uxD a/@uxD}
+      {$render-clear renderer/@uxG}
       ::
       {$proggy $~}
   ==
@@ -74,6 +75,10 @@
     =+  result=(set-render-draw-color:sdl renderer.command r.command g.command b.command a.command)
     ~&  [%result result]
     [~ +>.$]
+  {$render-clear *}
+    =+  result=(render-clear:sdl renderer.command)
+    ~&  [%result result]
+    [~ +>.$]
   ::
   {$proggy $~}
     :: init sdl
@@ -92,6 +97,12 @@
     =+  result2=(set-render-draw-color:sdl ren 0x80 0x80 0x80 0xff)
     ?:  !=(result2 --0)
       ~&  [%sdl-set-render-draw-color-error result2]
+      [~ +>.$]
+
+    ::  reuse result, again
+    =+  result3=(render-clear:sdl ren)
+    ?:  !=(result3 --0)
+      ~&  [%sdl-render-clear-error result2]
       [~ +>.$]
 
     ::  what's a better way to do these?
