@@ -17,9 +17,7 @@
 ::  :sdl-test [%set-render-draw-color <renderer> 0xad 0xd8 0xe6 0xff]
 ::  :sdl-test [%render-fill-rect <renderer> [--320 --200 --200 --200]]
 ::  :sdl-test [%render-present <renderer>]
-
-::  delay
-
+::  :sdl-test [%delay 0x1388]
 ::  :sdl-test [%destroy-renderer <renderer>]
 ::  :sdl-test [%destroy-window <window>]
 ::  :sdl-test [%quit ~]
@@ -45,6 +43,7 @@
       {$render-clear renderer/@uxG}
       {$render-fill-rect renderer/@uxG rect/{x/@s y/@s w/@s h/@s}}
       {$render-present renderer/@uxG}
+      {$delay ms/@uxF}
       ::
       {$proggy $~}
   ==
@@ -96,6 +95,10 @@
     [~ +>.$]
   {$render-present *}
     =+  result=(render-present:sdl renderer.command)
+    ~&  [%result result]
+    [~ +>.$]
+  {$delay *}
+    =+  result=(delay:sdl ms.command)
     ~&  [%result result]
     [~ +>.$]
   ::
@@ -166,6 +169,7 @@
 
     ::  what's a better way to do these?
     ~&  [%render-present (render-present:sdl ren)]
+    ~&  [%delay (delay:sdl 0x1388)]
     ~&  [%destroy-renderer (destroy-renderer:sdl ren)]
     ~&  [%destroy-window (destroy-window:sdl win)]
     ~&  [%quit (quit:sdl ~)]

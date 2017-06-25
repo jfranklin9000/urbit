@@ -47,7 +47,7 @@
   ~/  %create-window
   |=  {title/@ta x/@s y/@s w/@s h/@s flags/@uxF}
   ^-  @uxG
-  ::  ~&  [%create-window title x y w h flags]
+  ~&  [%create-window title x y w h flags]
   0x0  :: non-jet: fail
 
 ::  void SDL_DestroyWindow(SDL_Window* window)
@@ -123,6 +123,17 @@
   ~&  [%render-present renderer]
   ~  :: non-jet: void
 
-::  DELAY
+::::
+::::  http://wiki.libsdl.org/CategoryTimer
+::::
+
+::  void SDL_Delay(Uint32 ms)
+::
+++  delay
+  ~/  %delay
+  |=  ms/@uxF
+  ^-  $~
+  ~&  [%delay ms]
+  ~  :: non-jet: void
 
 --

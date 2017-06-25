@@ -46,6 +46,7 @@ sdl_init(u3_noun cor)
   u3_noun flags;
 
   flags = u3r_at(u3x_sam, cor);
+
   printf("\n\rinit: flags = 0x%08x\n\r", flags);
 
   return int2pats(SDL_Init(flags));
@@ -67,9 +68,7 @@ sdl_create_window(u3_noun cor)
   SDL_Window *win;
 
   u3x_hext(u3r_at(u3x_sam, cor), &title, &x, &y, &w, &h, &flags);
-
   strncpy(ttl, (char *) &title, 4);
-
   x = pats2int(x); y = pats2int(y); w = pats2int(w); h = pats2int(h);
 
   printf("\n\rcreate-window: title = %s, x = %d, y = %d, w = %d, h = %d, flags = 0x%08x\n\r",
@@ -104,9 +103,7 @@ sdl_create_renderer(u3_noun cor)
   SDL_Renderer *ren;
 
   u3x_trel(u3r_at(u3x_sam, cor), &window, &index, &flags);
-
   win = (SDL_Window *) u3r_chub(0, window);
-
   index = pats2int(index);
 
   printf("\n\rcreate-renderer: win = %p, index = %d, flags = 0x%08x\n\r", win, index, flags);
@@ -139,7 +136,6 @@ sdl_set_render_draw_color(u3_noun cor)
   SDL_Renderer *ren;
 
   u3x_quil(u3r_at(u3x_sam, cor), &renderer, &r, &g, &b, &a);
-
   ren = (SDL_Renderer *) u3r_chub(0, renderer);
 
   printf("\n\rset-render-draw-color: ren = %p, r = 0x%02x, g = 0x%02x, b = 0x%02x, a = 0x%02x\n\r",
@@ -170,15 +166,12 @@ sdl_render_fill_rect(u3_noun cor)
   SDL_Rect rec;
 
   u3x_cell(u3r_at(u3x_sam, cor), &renderer, &rect);
-
   ren = (SDL_Renderer *) u3r_chub(0, renderer);
-
   u3x_qual(rect, &x, &y, &w, &h);
-
   rec.x = pats2int(x); rec.y = pats2int(y); rec.w = pats2int(w); rec.h = pats2int(h);
 
   printf("\n\rrender-fill-rect: ren = %p, x = %d, y = %d, w = %d, h = %d\n\r",
-    ren, x, y, w, h);
+    ren, rec.x, rec.y, rec.w, rec.h);
 
   return int2pats(SDL_RenderFillRect(ren, &rec));
 }
@@ -194,9 +187,17 @@ sdl_render_present(u3_noun cor)
 
   printf("\n\rrender-present: ren = %p\n\r", ren);
 
-SDL_RenderPresent(ren);
-SDL_Delay(5000);
-return 0;
-
   return SDL_RenderPresent(ren), 0;
+}
+
+u3_noun
+sdl_delay(u3_noun cor)
+{
+  u3_noun ms;
+
+  ms = u3r_at(u3x_sam, cor);
+
+  printf("\n\rdelay: ms = 0x%x\n\r", ms);
+
+  return SDL_Delay(ms), 0;
 }

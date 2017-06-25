@@ -10,3 +10,5 @@ u3_noun sdl_set_render_draw_color(u3_noun);
 u3_noun sdl_render_clear(u3_noun);
 u3_noun sdl_render_fill_rect(u3_noun);
 u3_noun sdl_render_present(u3_noun);
+
+u3_noun sdl_delay(u3_noun);

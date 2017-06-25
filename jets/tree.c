@@ -491,6 +491,7 @@ static u3j_harm _sdl_set_render_draw_color_a[] = {{".2", sdl_set_render_draw_col
 static u3j_harm _sdl_render_clear_a[] = {{".2", sdl_render_clear, c3y}, {}};
 static u3j_harm _sdl_render_fill_rect_a[] = {{".2", sdl_render_fill_rect, c3y}, {}};
 static u3j_harm _sdl_render_present_a[] = {{".2", sdl_render_present, c3y}, {}};
+static u3j_harm _sdl_delay_a[] = {{".2", sdl_delay, c3y}, {}};
 
 static u3j_core _sdl_d[] =
   { { "init", _sdl_init_a },
@@ -503,7 +504,7 @@ static u3j_core _sdl_d[] =
     { "render-clear", _sdl_render_clear_a },
     { "render-fill-rect", _sdl_render_fill_rect_a },
     { "render-present", _sdl_render_present_a },
-    // delay
+    { "delay", _sdl_delay_a },
     {}
   };
 
