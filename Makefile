@@ -556,3 +556,8 @@ sync: $(ARVO_SYNCS)
 
 #sync-rm:
 #	rm -f $(ARVO_SYNCS)
+
+.PHONY: copy-sdl-test-files
+copy-sdl-test-files:
+	cp arvo/lib/sdl.hoon comet-maint-SDL2/home/lib/
+	cp arvo/app/sdl-test.hoon comet-maint-SDL2/home/app/
