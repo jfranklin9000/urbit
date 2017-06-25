@@ -1,5 +1,9 @@
+// ~dirwex-dosrev
+
 #include <SDL.h>
 #include "all.h"
+
+// do transfer/retain analysis -- TODO
 
 /*
   ++  new  |=  {a/? b/@}                                ::  [sign value] to @s
@@ -36,8 +40,6 @@ int2pats(int i)    // int to @s
     return 2 * (tc(i) - 1) + 1;
 }
 
-// do transfer/retain analysis
-
 u3_noun
 sdl_init(u3_noun cor)
 {
@@ -52,7 +54,7 @@ sdl_init(u3_noun cor)
 u3_noun
 sdl_quit(u3_noun cor)
 {
-  // printf("\n\rSDL_Quit()\n\r");
+  printf("\n\rquit: bye bye\n\r");
 
   return SDL_Quit(), 0;
 }
@@ -89,7 +91,7 @@ sdl_destroy_window(u3_noun cor)
   window = u3r_at(u3x_sam, cor);
   win = (SDL_Window *) u3r_chub(0, window);
 
-  printf("\n\rdestroy-window: win = %p\n", win);
+  printf("\n\rdestroy-window: win = %p\n\r", win);
 
   return SDL_DestroyWindow(win), 0;
 }
@@ -107,7 +109,7 @@ sdl_create_renderer(u3_noun cor)
 
   index = pats2int(index);
 
-  printf("\n\rcreate-renderer: win = %p, index = %d, flags = 0x%08x\n", win, index, flags);
+  printf("\n\rcreate-renderer: win = %p, index = %d, flags = 0x%08x\n\r", win, index, flags);
 
   ren = SDL_CreateRenderer(win, index, flags);
 
@@ -125,9 +127,7 @@ sdl_destroy_renderer(u3_noun cor)
   renderer = u3r_at(u3x_sam, cor);
   ren = (SDL_Renderer *) u3r_chub(0, renderer);
 
-  printf("\n\rdestroy-renderer: ren = %p\n", ren);
-
-SDL_Delay(5000);
+  printf("\n\rdestroy-renderer: ren = %p\n\r", ren);
 
   return SDL_DestroyRenderer(ren), 0;
 }
@@ -157,7 +157,7 @@ sdl_render_clear(u3_noun cor)
   renderer = u3r_at(u3x_sam, cor);
   ren = (SDL_Renderer *) u3r_chub(0, renderer);
 
-  printf("\n\rrender-clear: ren = %p\n", ren);
+  printf("\n\rrender-clear: ren = %p\n\r", ren);
 
   return int2pats(SDL_RenderClear(ren));
 }
@@ -165,28 +165,38 @@ sdl_render_clear(u3_noun cor)
 u3_noun
 sdl_render_fill_rect(u3_noun cor)
 {
-  u3_noun renderer, rect;
+  u3_noun renderer, rect, x, y, w, h;
   SDL_Renderer *ren;
-  // SDL_Rect
+  SDL_Rect rec;
 
   u3x_cell(u3r_at(u3x_sam, cor), &renderer, &rect);
 
   ren = (SDL_Renderer *) u3r_chub(0, renderer);
 
-  printf("\n\rrender-fill-rect: ren = %p\n", ren);
+  u3x_qual(rect, &x, &y, &w, &h);
 
-u3_noun retval;
+  rec.x = pats2int(x); rec.y = pats2int(y); rec.w = pats2int(w); rec.h = pats2int(h);
 
- // do stuff
+  printf("\n\rrender-fill-rect: ren = %p, x = %d, y = %d, w = %d, h = %d\n\r",
+    ren, x, y, w, h);
 
-//retval = int2pats(SDL_RenderFillRect(ren, x, y, w, h));
-SDL_RenderPresent(ren);
-
-  return 0; // retval; // int2pats(SDL_RenderFillRect(ren, x, y, w, h));
+  return int2pats(SDL_RenderFillRect(ren, &rec));
 }
 
 u3_noun
 sdl_render_present(u3_noun cor)
 {
-  return -1;
+  u3_noun renderer;
+  SDL_Renderer *ren;
+
+  renderer = u3r_at(u3x_sam, cor);
+  ren = (SDL_Renderer *) u3r_chub(0, renderer);
+
+  printf("\n\rrender-present: ren = %p\n\r", ren);
+
+SDL_RenderPresent(ren);
+SDL_Delay(5000);
+return 0;
+
+  return SDL_RenderPresent(ren), 0;
 }

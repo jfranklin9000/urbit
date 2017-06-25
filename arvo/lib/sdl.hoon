@@ -1,7 +1,5 @@
 ::  ~dirwex-dosrev
 
-::  ~dirwex-dosrev
-
 ::::
 ::::  http://wiki.libsdl.org
 ::::
@@ -107,7 +105,6 @@
   ~&  [%render-clear renderer]
   --0  :: non-jet: success
 
-
 ::  int SDL_RenderFillRect(SDL_Renderer*   renderer,
 ::                         const SDL_Rect* rect)
 ::
@@ -118,14 +115,13 @@
   ~&  [%render-fill-rect renderer rect]
   --0  :: non-jet: success
 
-
 ::  void SDL_RenderPresent(SDL_Renderer* renderer)
 ::
 ++  render-present
   ~/  %render-present
-  |=  flags/@u                                          :: mold is a stub
-  ^-  @s
-  -1
+  |=  renderer/@uxG
+  ~&  [%render-present renderer]
+  ~  :: non-jet: void
 
 ::  DELAY
 

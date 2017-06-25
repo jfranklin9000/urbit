@@ -10,14 +10,14 @@
 ::  :sdl-test [%create-renderer <window> -1 0x0]
 ::  :sdl-test [%set-render-draw-color <renderer> 0x80 0x80 0x80 0xff]
 ::  :sdl-test [%render-clear <renderer>]
-::  :sdl-test [%set-render-draw-color <renderer> 0xf0 0x10 0x10 0xff]
+::  :sdl-test [%set-render-draw-color <renderer> 0xff 0x8c 0x69 0xff]
 ::  :sdl-test [%render-fill-rect <renderer> [--120 --100 --200 --200]]
-::  :sdl-test [%set-render-draw-color <renderer> 0x10 0xf0 0x10 0xff]
+::  :sdl-test [%set-render-draw-color <renderer> 0x54 0xff 0x9f 0xff]
 ::  :sdl-test [%render-fill-rect <renderer> [--220 --150 --200 --200]]
-::  :sdl-test [%set-render-draw-color <renderer> 0x10 0x10 0xf0 0xff]
+::  :sdl-test [%set-render-draw-color <renderer> 0xad 0xd8 0xe6 0xff]
 ::  :sdl-test [%render-fill-rect <renderer> [--320 --200 --200 --200]]
+::  :sdl-test [%render-present <renderer>]
 
-::  present
 ::  delay
 
 ::  :sdl-test [%destroy-renderer <renderer>]
@@ -43,10 +43,8 @@
       {$destroy-renderer renderer/@uxG}
       {$set-render-draw-color renderer/@uxG r/@uxD g/@uxD b/@uxD a/@uxD}
       {$render-clear renderer/@uxG}
-
-::      {$render-fill-rect renderer/@uxG rect/{x/@s y/@s w/@s h/@s}}
-::      {$render-fill-rect renderer/@uxG {$rect x/@s y/@s w/@s h/@s}}
       {$render-fill-rect renderer/@uxG rect/{x/@s y/@s w/@s h/@s}}
+      {$render-present renderer/@uxG}
       ::
       {$proggy $~}
   ==
@@ -92,9 +90,12 @@
     =+  result=(render-clear:sdl renderer.command)
     ~&  [%result result]
     [~ +>.$]
-
   {$render-fill-rect *}
     =+  result=(render-fill-rect:sdl renderer.command rect.command)
+    ~&  [%result result]
+    [~ +>.$]
+  {$render-present *}
+    =+  result=(render-present:sdl renderer.command)
     ~&  [%result result]
     [~ +>.$]
   ::
@@ -128,7 +129,7 @@
       [~ +>.$]
 
     ::  reuse result, again
-    =+  result4=(set-render-draw-color:sdl ren 0xf0 0x10 0x10 0xff)
+    =+  result4=(set-render-draw-color:sdl ren 0xff 0x8c 0x69 0xff)
     ?:  !=(result4 --0)
       ~&  [%sdl-set-render-draw-color-error result4]
       [~ +>.$]
@@ -139,7 +140,32 @@
       ~&  [%sdl-render-fill-rect-error result5]
       [~ +>.$]
 
+    ::  reuse result, again
+    =+  result6=(set-render-draw-color:sdl ren 0x54 0xff 0x9f 0xff)
+    ?:  !=(result6 --0)
+      ~&  [%sdl-set-render-draw-color-error result6]
+      [~ +>.$]
+
+    ::  reuse result, again
+    =+  result7=(render-fill-rect:sdl ren [--220 --150 --200 --200])
+    ?:  !=(result7 --0)
+      ~&  [%sdl-render-fill-rect-error result7]
+      [~ +>.$]
+
+    ::  reuse result, again
+    =+  result8=(set-render-draw-color:sdl ren 0xad 0xd8 0xe6 0xff)
+    ?:  !=(result8 --0)
+      ~&  [%sdl-set-render-draw-color-error result8]
+      [~ +>.$]
+
+    ::  reuse result, again
+    =+  result9=(render-fill-rect:sdl ren [--320 --200 --200 --200])
+    ?:  !=(result9 --0)
+      ~&  [%sdl-render-fill-rect-error result9]
+      [~ +>.$]
+
     ::  what's a better way to do these?
+    ~&  [%render-present (render-present:sdl ren)]
     ~&  [%destroy-renderer (destroy-renderer:sdl ren)]
     ~&  [%destroy-window (destroy-window:sdl win)]
     ~&  [%quit (quit:sdl ~)]
