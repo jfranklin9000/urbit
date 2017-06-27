@@ -426,7 +426,8 @@ MOUNTED_DESK=../PLANETS/dolnyd-pastyr/home
 
 ARVO_SYNCS=\
 	$(MOUNTED_DESK)/app/sdl-test.hoon \
-	$(MOUNTED_DESK)/lib/sdl.hoon
+	$(MOUNTED_DESK)/lib/sdl.hoon \
+	$(MOUNTED_DESK)/sur/c.hoon
 
 all: urbit
 
@@ -559,5 +560,6 @@ sync: $(ARVO_SYNCS)
 
 .PHONY: copy-sdl-test-files
 copy-sdl-test-files:
+	cp arvo/sur/sdl.hoon comet-maint-SDL2/c/sur/
 	cp arvo/lib/sdl.hoon comet-maint-SDL2/home/lib/
 	cp arvo/app/sdl-test.hoon comet-maint-SDL2/home/app/

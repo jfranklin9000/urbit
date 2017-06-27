@@ -4,7 +4,8 @@
 ::::  http://wiki.libsdl.org
 ::::
 
-::  @uxG is used for pointers
+::  C types in Hoon
+/-  c                                                   :: /hoon/c/sur
 
 ~%  %sdl  ..is  ~                                       :: jetted, no ~& output
 
@@ -18,8 +19,8 @@
 ::
 ++  init
   ~/  %init
-  |=  flags/@uxF
-  ^-  @s
+  |=  flags/u32:c
+  ^-  int:c
   ~&  [%init flags]
   --0  :: non-jet: success
 
@@ -27,8 +28,8 @@
 ::
 ++  quit
   ~/  %quit
-  |=  $~
-  ^-  $~
+  |=  void:c
+  ^-  void:c
   ~&  [%quit ~]
   ~  :: non-jet: void
 
@@ -45,8 +46,8 @@
 ::
 ++  create-window
   ~/  %create-window
-  |=  {title/@ta x/@s y/@s w/@s h/@s flags/@uxF}
-  ^-  @uxG
+  |=  {title/@ta x/int:c y/int:c w/int:c h/int:c flags/u32:c}
+  ^-  ptr:c
   ~&  [%create-window title x y w h flags]
   0x0  :: non-jet: fail
 
@@ -54,8 +55,8 @@
 ::
 ++  destroy-window
   ~/  %destroy-window
-  |=  window/@uxG
-  ^-  $~
+  |=  window/ptr:c
+  ^-  void:c
   ~&  [%destroy-window window]
   ~  :: non-jet: void
 
@@ -69,8 +70,8 @@
 ::
 ++  create-renderer
   ~/  %create-renderer
-  |=  {window/@uxG index/@s flags/@uxF}
-  ^-  @uxG
+  |=  {window/ptr:c index/int:c flags/u32:c}
+  ^-  ptr:c
   ~&  [%create-renderer window index flags]
   0x0  :: non-jet: fail
 
@@ -78,8 +79,8 @@
 ::
 ++  destroy-renderer
   ~/  %destroy-renderer
-  |=  renderer/@uxG
-  ^-  $~
+  |=  renderer/ptr:c
+  ^-  void:c
   ~&  [%destroy-renderer renderer]
   ~  :: non-jet: void
 
@@ -91,8 +92,8 @@
 ::
 ++  set-render-draw-color
   ~/  %set-render-draw-color
-  |=  {renderer/@uxG r/@uxD g/@uxD b/@uxD a/@uxD}
-  ^-  @s
+  |=  {renderer/ptr:c r/u8:c g/u8:c b/u8:c a/u8:c}
+  ^-  int:c
   ~&  [%set-render-draw-color renderer r g b a]
   --0  :: non-jet: success
 
@@ -100,8 +101,8 @@
 ::
 ++  render-clear
   ~/  %render-clear
-  |=  renderer/@uxG
-  ^-  @s
+  |=  renderer/ptr:c
+  ^-  int:c
   ~&  [%render-clear renderer]
   --0  :: non-jet: success
 
@@ -110,8 +111,8 @@
 ::
 ++  render-fill-rect
   ~/  %render-fill-rect
-  |=  {renderer/@uxG rect/{x/@s y/@s w/@s h/@s}}  ::
-  ^-  @s
+  |=  {renderer/ptr:c rect/{x/int:c y/int:c w/int:c h/int:c}}
+  ^-  int:c
   ~&  [%render-fill-rect renderer rect]
   --0  :: non-jet: success
 
@@ -119,7 +120,7 @@
 ::
 ++  render-present
   ~/  %render-present
-  |=  renderer/@uxG
+  |=  renderer/ptr:c
   ~&  [%render-present renderer]
   ~  :: non-jet: void
 
@@ -131,8 +132,8 @@
 ::
 ++  delay
   ~/  %delay
-  |=  ms/@uxF
-  ^-  $~
+  |=  ms/u32:c
+  ^-  void:c
   ~&  [%delay ms]
   ~  :: non-jet: void
 

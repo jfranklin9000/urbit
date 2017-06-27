@@ -22,6 +22,9 @@
 ::  :sdl-test [%destroy-window <window>]
 ::  :sdl-test [%quit ~]
 
+::  C types in Hoon
+/-  c                                                   :: /hoon/c/sur
+
 /+  sdl                                                 :: /hoon/sdl/lib
 
 !:                                                      :: enable stack traces
@@ -33,19 +36,19 @@
 
 ::  app commands
 ++  command
-  $%  {$init flags/@uxF}
-      {$quit $~}
-      {$create-window title/@ta x/@s y/@s w/@s h/@s flags/@uxF}
-      {$destroy-window window/@uxG}
-      {$create-renderer window/@uxG index/@s flags/@uxF}
-      {$destroy-renderer renderer/@uxG}
-      {$set-render-draw-color renderer/@uxG r/@uxD g/@uxD b/@uxD a/@uxD}
-      {$render-clear renderer/@uxG}
-      {$render-fill-rect renderer/@uxG rect/{x/@s y/@s w/@s h/@s}}
-      {$render-present renderer/@uxG}
-      {$delay ms/@uxF}
+  $%  {$init flags/u32:c}
+      {$quit void:c}
+      {$create-window title/@ta x/int:c y/int:c w/int:c h/int:c flags/u32:c}
+      {$destroy-window window/ptr:c}
+      {$create-renderer window/ptr:c index/int:c flags/u32:c}
+      {$destroy-renderer renderer/ptr:c}
+      {$set-render-draw-color renderer/ptr:c r/u8:c g/u8:c b/u8:c a/u8:c}
+      {$render-clear renderer/ptr:c}
+      {$render-fill-rect renderer/ptr:c rect/{x/int:c y/int:c w/int:c h/int:c}}
+      {$render-present renderer/ptr:c}
+      {$delay ms/u32:c}
       ::
-      {$proggy $~}
+      {$proggy void:c}
   ==
 
 --                                                      :: end molds

@@ -40,7 +40,8 @@ Mount the `%home` desk
 ````
 
 `Makefile` has target `copy-sdl-test-files` that copies
-`arvo/lib/sdl.hoon` and `arvo/app/sdl-test.app` to `%home`.
+`arvo/sur/c.hoon`, `arvo/lib/sdl.hoon` and `arvo/app/sdl-test.app`
+to `%home`.
 
 ````
 make copy-sdl-test-files
