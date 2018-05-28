@@ -482,7 +482,7 @@ u3m_mark(void)
 /* _cm_pave(): instantiate or activate image.
 */
 static void
-_cm_pave(c3_o nuu_o, c3_o bug_o)
+_cm_pave(c3_o nuu_o)
 {
   if ( c3y == nuu_o ) {
     u3H = (void *)_pave_north(u3_Loom + 1, 
@@ -1144,8 +1144,8 @@ u3m_grab(u3_noun som, ...)   // terminate with u3_none
 */
 u3_noun 
 u3m_soft(c3_w    sec_w,
-           u3_funk fun_f,
-           u3_noun arg)
+         u3_funk fun_f,
+         u3_noun arg)
 {
   u3_noun why;
  
@@ -1497,10 +1497,56 @@ _cm_init(c3_o chk_o)
   }
 }
 
-/* _boot_home(): create ship directory. */
+/* _cm_init_new(): start the environment.
+*/
+void
+_cm_init_new(void)
+{
+  _cm_limits();
+  _cm_signals();
+
+  /* Make sure GMP uses our malloc.
+  */
+  mp_set_memory_functions(u3a_malloc, u3a_realloc2, u3a_free2);
+
+  /* Map at fixed address.
+  */
+  {
+    c3_w  len_w = u3a_bytes;
+    void* map_v;
+
+    map_v = mmap((void *)u3_Loom,
+                 len_w,
+                 (PROT_READ | PROT_WRITE),
+                 (MAP_ANON | MAP_FIXED | MAP_PRIVATE),
+                 -1, 0);
+
+    if ( -1 == (c3_ps)map_v ) {
+      void* dyn_v = mmap((void *)0,
+                         len_w,
+                         PROT_READ,
+                         MAP_ANON | MAP_PRIVATE,
+                         -1, 0);
+
+      fprintf(stderr, "boot: mapping %dMB failed\r\n", (len_w / (1024 * 1024)));
+      fprintf(stderr, "see urbit.org/docs/using/install to add swap space\r\n");
+      if ( -1 != (c3_ps)map_v ) {
+        fprintf(stderr, 
+                "if porting to a new platform, try U3_OS_LoomBase %p\r\n", 
+                dyn_v);
+      }
+      exit(1);
+    }
+    printf("loom: mapped %dMB\r\n", len_w >> 20);
+  }
+}
+
+/* _boot_home(): create ship directory.
+*/
 static void
 _boot_home(c3_c *dir_c, c3_c *pil_c)
 {
+  c3_c*   nam_c = "urbit.pill";
   c3_c    ful_c[2048];
 
   /* Create subdirectories. */
@@ -1524,7 +1570,7 @@ _boot_home(c3_c *dir_c, c3_c *pil_c)
   {
     {
       struct stat s;
-      snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
+      snprintf(ful_c, 2048, "%s/.urb/%s", dir_c, nam_c);
       if ( stat(ful_c, &s) == 0 ) {
         /* we're in a "logical boot". awful hack, but bail here */
         printf("%s confirmed to exist\r\n", ful_c);
@@ -1532,47 +1578,25 @@ _boot_home(c3_c *dir_c, c3_c *pil_c)
       }
     }
     if ( pil_c != 0 ) {
-      snprintf(ful_c, 2048, "cp %s %s/.urb/urbit.pill",
-                      pil_c, dir_c);
+      snprintf(ful_c, 2048, "cp %s %s/.urb/%s",
+                      pil_c, dir_c, nam_c);
       printf("%s\r\n", ful_c);
       if ( 0 != system(ful_c) ) {
         fprintf(stderr, "could not %s\n", ful_c);
         exit(1);
       }
     } else {
-      c3_c *url_c = "https://bootstrap.urbit.org/latest.pill";
-      CURL *curl;
-      CURLcode result;
-      FILE *file;
-
-      snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
-      printf("fetching %s to %s\r\n", url_c, ful_c);
-      if ( !(curl = curl_easy_init()) ) {
-        fprintf(stderr, "failed to initialize libcurl\n");
-        exit(1);
-      }
-      if ( !(file = fopen(ful_c, "w")) ) {
-        fprintf(stderr, "failed to open %s\n", ful_c);
-        exit(1);
-      }
-      curl_easy_setopt(curl, CURLOPT_URL, url_c);
-      curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
-      result = curl_easy_perform(curl);
-      fclose(file);
-      if ( result != CURLE_OK ) {
-        fprintf(stderr, "failed to fetch %s: %s\n", url_c, curl_easy_strerror(result));
-        fprintf(stderr, "please fetch it manually and specify the location with -B\n");
-        exit(1);
-      }
-      curl_easy_cleanup(curl);
+      fprintf(stderr, "no pill - get one from bootstrap.urbit.org\n"
+                      "by arvo commit hash, then specify it with -B\n");
+      exit(1);
     }
   }
 }
 
-/* u3m_boot(): start the u3 system.
+/* u3m_boot(): start the u3 system (old).
 */
 void
-u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c, c3_c *pil_c)
+u3m_boot(c3_o nuu_o, c3_c* dir_c, c3_c *pil_c)
 {
   /* Activate the loom.
   */
@@ -1588,7 +1612,7 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c, c3_c *pil_c)
 
   /* Construct or activate the allocator.
   */
-  _cm_pave(nuu_o, bug_o);
+  _cm_pave(nuu_o);
 
   /* Initialize the jet system.
   */
@@ -1601,15 +1625,88 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c, c3_c *pil_c)
 
     _boot_home(dir_c, pil_c);
 
-    snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
+    {
+      snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
 
-    printf("boot: loading %s\r\n", ful_c);
-    u3v_make(ful_c);
-
-    u3v_jack();
+      printf("boot: loading %s\r\n", ful_c);
+      u3v_boot(ful_c);
+    } 
   }
   else {
     u3v_hose();
     u3j_ream();
   }
+}
+
+/* u3m_boot_new(): start the u3 system (new).  return next event,
+** starting from 1.
+*/
+c3_d
+u3m_boot_new(c3_c* dir_c)
+{
+  c3_o nuu_o;
+
+  /* Activate the loom.
+  */
+  _cm_init_new();
+
+  /* Activate the storage system.
+  */
+  nuu_o = u3e_live(c3n, dir_c);
+
+  /* Activate tracing.
+  */
+  u3t_init();
+
+  /* Construct or activate the allocator.
+  */
+  _cm_pave(nuu_o);
+
+  /* Initialize the jet system.
+  */
+  u3j_boot();
+
+  /* Reactivate jets on old kernel.
+  */
+  if ( !_(nuu_o) ) {
+    u3v_hose();
+    u3j_ream();
+
+    return u3A->ent_d;
+  }
+  else {
+  /* Basic initialization.
+  */
+    memset(u3A, 0, sizeof(*u3A));
+
+    return 0;
+  }
+}
+
+/* u3m_boot_pier(): start without checkpointing.
+*/
+c3_d
+u3m_boot_pier(void)
+{
+  /* Activate the loom.
+  */
+  _cm_init_new();
+
+  /* Activate tracing.
+  */
+  u3t_init();
+
+  /* Construct or activate the allocator.
+  */
+  _cm_pave(c3y);
+
+  /* Initialize the jet system.
+  */
+  u3j_boot();
+
+  /* Basic initialization.
+  */
+  memset(u3A, 0, sizeof(*u3A));
+
+  return 0;
 }

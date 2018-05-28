@@ -9,6 +9,8 @@ If you're doing development on Urbit, keep reading.
 
 # Build instructions
 
+[![Build Status](https://travis-ci.org/urbit/urbit.svg?branch=master)](https://travis-ci.org/urbit/urbit)
+
 ## External dependencies
 
 `vere`, the Urbit virtual machine, depends on the following:
@@ -17,7 +19,7 @@ If you're doing development on Urbit, keep reading.
 - [GNU Make](https://www.gnu.org/software/make/)
 - [GMP](https://gmplib.org)
 - [CMake](https://cmake.org)
-- automake, autoconf, and libtool
+- [libuv](https://libuv.org) 1.x
 - [OpenSSL](https://www.openssl.org)
 - [libsigsegv](https://www.gnu.org/software/libsigsegv/)
 - [libcurl](https://curl.haxx.se/libcurl/)

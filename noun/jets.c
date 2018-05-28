@@ -344,7 +344,7 @@ u3j_boot(void)
   memset(u3D.ray_u, 0, (u3D.all_l * sizeof(u3j_core)));
 
   jax_l = _cj_install(u3D.ray_u, 1, u3D.dev_u);
-  fprintf(stderr, "boot: installed %d jets\n", jax_l);
+  fprintf(stderr, "boot: installed %d jets\r\n", jax_l);
 }
 
 /* _cj_soft(): kick softly by arm axis.
@@ -770,7 +770,7 @@ _cj_mine(u3_noun cey, u3_noun cor)
 
 #if 0
       u3m_p("new jet", bal);
-      fprintf(stderr, "  bat %x, jax %d\r\n", u3r_mug(bat), jax_l);
+      // fprintf(stderr, "  bat %x, jax %d\r\n", u3r_mug(bat), jax_l);
 #endif
 
       u3h_put(u3R->jed.har_p, 

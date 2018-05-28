@@ -31,6 +31,7 @@
 
         u3_noun roe;                      //  temporary unsaved events
         u3_noun key;                      //  log key, or 0
+        u3_noun sys;                      //  system pill
 
         u3_noun ken;                      //  kernel formula
         u3_noun roc;                      //  kernel core
@@ -63,6 +64,16 @@
     */
       u3_noun
       u3v_do(const c3_c* txt_c, u3_noun arg);
+
+    /* u3v_boot(): make a new pier by loading a pill.
+    */
+      void
+      u3v_boot(c3_c* pas_c);
+
+    /* u3v_boot_lite(): light bootstrap sequence, just making a kernel.
+    */
+      void
+      u3v_boot_lite(u3_noun lit);
 
     /* u3v_make(): make a new pier by loading a pill.
     */

@@ -869,6 +869,13 @@ u3r_sing(u3_noun a, u3_noun b)
 c3_o
 u3r_sung(u3_noun a, u3_noun b)
 {
+  if ( a == b ) { return c3y; }
+ 
+#if 0
+  if ( u3r_mug(a) == u3r_mug(b) ) {
+    fprintf(stderr, "collision on %x: %x/%x\r\n", u3r_mug(a), a, b);
+  }
+#endif
   return _sung_x(a, b);
 }
 
@@ -1544,9 +1551,9 @@ u3r_chub(c3_w  a_w,
 */
 void
 u3r_words(c3_w    a_w,
-            c3_w    b_w,
-            c3_w*   c_w,
-            u3_atom d)
+          c3_w    b_w,
+          c3_w*   c_w,
+          u3_atom d)
 {
   c3_assert(u3_none != d);
   c3_assert(_(u3a_is_atom(d)));
@@ -1577,6 +1584,21 @@ u3r_words(c3_w    a_w,
       } 
     }
   }
+}
+
+/* u3r_chubs():
+**
+**  Copy double-words (a_w) through (a_w + b_w - 1) from (d) to (c).
+*/
+void
+u3r_chubs(c3_w    a_w,
+          c3_w    b_w,
+          c3_d*   c_d,
+          u3_atom d)
+{
+  /* XX: assumes little-endian
+  */
+  u3r_words(a_w * 2, b_w * 2, (c3_w *)c_d, d);
 }
 
 /* u3r_chop():

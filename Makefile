@@ -34,6 +34,13 @@ ENDIAN=little
 BIN=bin
 
 # Only include/link with this if it exists.
+# For the Nix package manager
+ifdef NIX_PROFILE
+  NIXINC=-I$(NIX_PROFILE)/include
+  NIXLIB=-L$(NIX_PROFILE)/lib
+endif
+
+# Only include/link with this if it exists.
 # (Mac OS X El Capitan clean install does not have /opt)
 ifneq (,$(wildcard /opt/local/.))
   OPTLOCALINC?=/opt/local/include
@@ -66,9 +73,10 @@ CURLLIB=$(shell curl-config --libs)
 
 RM=rm -f
 CC=cc
+LN=ln -f
 CXX=c++
 CXXFLAGS=$(CFLAGS)
-CLD=c++ $(CFLAGS) -L/usr/local/lib $(OPTLOCALLFLAGS) $(OPENSSLLFLAGS)
+CLD=$(CXX) $(CFLAGS) -L/usr/local/lib $(NIXLIB) $(OPTLOCALLFLAGS) $(OPENSSLLFLAGS)
 
 ifeq ($(OS),osx)
   CLDOSFLAGS=-bind_at_load
@@ -83,9 +91,9 @@ ifeq ($(OS),bsd)
 endif
 
 ifeq ($(STATIC),yes)
-LIBS=-lssl -lcrypto -lncurses /usr/local/lib/libsigsegv.a /usr/local/lib/libgmp.a $(CURLLIB) $(OSLIBS)
+LIBS=-lssl -lcrypto -luv -lncurses /usr/local/lib/libsigsegv.a /usr/local/lib/libgmp.a $(CURLLIB) $(OSLIBS)
 else
-LIBS=-lssl -lcrypto -lgmp -lncurses -lsigsegv $(CURLLIB) $(OSLIBS)
+LIBS=-lssl -lcrypto -luv -lgmp -lncurses -lsigsegv $(CURLLIB) $(OSLIBS)
 endif
 
 INCLUDE=include
@@ -99,21 +107,17 @@ else
 CFLAGS?=-O3
 endif
 
-LIBUV_VER=libuv-v1.7.5
-
-LIBUV_CONFIGURE_OPTIONS=CC=$(CC)
-
 # NOTFORCHECKIN - restore -O3
 # 	-DGHETTO \
 #   -DHUSH
 CFLAGS+= $(COSFLAGS) -ffast-math \
 	-funsigned-char \
 	-I/usr/local/include \
+	$(NIXINC) \
 	$(OPTLOCALIFLAGS) \
 	$(OPENSSLIFLAGS) \
 	$(CURLINC) \
 	-I$(INCLUDE) \
-	-Ioutside/$(LIBUV_VER)/include \
 	-Ioutside/anachronism/include \
 	-Ioutside/ed25519/src \
 	-Ioutside/commonmark/src \
@@ -275,6 +279,7 @@ J_E_OFILES=\
        jets/e/rd.o \
        jets/e/rq.o \
        jets/e/rs.o \
+       jets/e/rh.o \
        jets/e/rub.o \
        jets/e/scr.o \
        jets/e/shax.o \
@@ -321,7 +326,7 @@ J_F_OFILES_UT=\
        jets/f/ut_mull.o \
        jets/f/ut_nest.o \
        jets/f/ut_peek.o \
-       jets/f/ut_perk.o \
+       jets/f/ut_peel.o \
        jets/f/ut_play.o \
        jets/f/ut_repo.o \
        jets/f/ut_rest.o \
@@ -356,15 +361,18 @@ V_OFILES=\
        vere/behn.o \
        vere/cttp.o \
        vere/http.o \
-       vere/loop.o \
-       vere/raft.o \
+       vere/newt.o \
        vere/reck.o \
-       vere/sist.o \
        vere/term.o \
        vere/time.o \
        vere/unix.o \
        vere/save.o \
-       vere/walk.o
+       vere/serf.o \
+       vere/king.o \
+       vere/pier.o \
+       vere/foil.o \
+       vere/walk.o \
+       vere/ivory.o
 
 MAIN_FILE =\
        vere/main.o
@@ -378,25 +386,6 @@ VERE_OFILES=\
 VERE_DFILES=$(VERE_OFILES:%.o=.d/%.d)
 
 -include $(VERE_DFILES)
-
-# This is a silly hack necessitated by the fact that libuv uses configure
-#
-#    * Making 'all' obviously requires outside/libuv,
-#      which requires the libuv Makefile to be created.
-#    * Making distclean on outside/libuv destroys the makefile.
-#    * ...so configuring outside/libuv is parodoxically required
-#      in order to distclean it!
-#    * But what if developer types 'make distclean all' ?
-#    * first target makes libuv Makefile, then destroys it...and
-#      second target knows that it was made.
-#    * ...so second target borks.
-#    * Solution: make libuv not only depend on its own Makefile,
-#      but on a side effect of creating its own makefile.
-#
-LIBUV_MAKEFILE=outside/$(LIBUV_VER)/Makefile
-LIBUV_MAKEFILE2=outside/$(LIBUV_VER)/config.log
-
-LIBUV=outside/$(LIBUV_VER)/.libs/libuv.a
 
 LIBED25519=outside/ed25519/ed25519.a
 
@@ -429,7 +418,7 @@ ARVO_SYNCS=\
 	$(MOUNTED_DESK)/lib/sdl.hoon \
 	$(MOUNTED_DESK)/sur/c.hoon
 
-all: urbit
+all: urbit links
 
 .MAKEFILE-VERSION: Makefile .make.conf
 	@echo "Makefile update."
@@ -438,28 +427,11 @@ all: urbit
 .make.conf:
 	@echo "# Set custom configuration here, please!" > ".make.conf"
 
+links: urbit
+	$(LN) $(BIN)/urbit $(BIN)/urbit-worker
+
 urbit: $(BIN)/urbit
-
-$(LIBUV_MAKEFILE) $(LIBUV_MAKEFILE2):
-	cd outside/$(LIBUV_VER) ; sh autogen.sh ; ./configure $(LIBUV_CONFIGURE_OPTIONS)
-
-# [h]act II: the plot thickens
-#
-#     * Specifying two targets that each configure libuv works
-#       when the rules are executed sequentially,
-#     * but when attempting a parallel build, it is likely Make
-#       will try to configure libuv simultaneously.
-#     * We can specify a dependency between the two targets so
-#       that execution of their rule(s) is serialized.
-#     * Further, libuv does not seem to be friendly towards
-#       parallel builds either. A true fix is out of scope here
-#     * ...so we must instruct Make to only use one job when it
-#       attempts to build libuv.
-#
-$(LIBUV_MAKEFILE2): $(LIBUV_MAKEFILE)
-
-$(LIBUV): $(LIBUV_MAKEFILE) $(LIBUV_MAKEFILE2)
-	$(MAKE) -C outside/$(LIBUV_VER) all-am -j1
+booter: $(BIN)/booter
 
 $(LIBED25519):
 	$(MAKE) -C outside/ed25519
@@ -492,15 +464,19 @@ $(LIBSDL2): $(LIBSDL2_MAKEFILE)
 $(V_OFILES): include/vere/vere.h
 
 ifdef NO_SILENT_RULES
-$(BIN)/urbit: $(LIBCOMMONMARK) $(LIBSDL2) $(VERE_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
+$(BIN)/urbit: $(LIBCOMMONMARK) $(LIBSDL2) $(VERE_OFILES) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT) $(LIBSDL2_LINK)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT) $(LIBSDL2_LINK)
 else
-$(BIN)/urbit: $(LIBCOMMONMARK) $(LIBSDL2) $(VERE_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
+$(BIN)/urbit: $(LIBCOMMONMARK) $(LIBSDL2) $(VERE_OFILES) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 	@echo "    CCLD  $(BIN)/urbit"
 	@mkdir -p $(BIN)
-	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT) $(LIBSDL2_LINK)
+	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT) $(LIBSDL2_LINK)
 endif
+
+# This should start a comet or something
+test:
+	@echo "FIXME no tests defined"
 
 tags: ctags etags gtags cscope
 
@@ -539,15 +515,14 @@ clean:
 
 # 'make distclean all -jn' ∀ n>1 still does not work because it is possible
 # Make will attempt to build urbit while it is also cleaning urbit..
-distclean: clean $(LIBUV_MAKEFILE)
-	$(MAKE) -C outside/$(LIBUV_VER) distclean
+distclean: clean
 	$(MAKE) -C outside/ed25519 clean
 	$(MAKE) -C outside/anachronism clean
 	$(MAKE) -C outside/scrypt clean
 	$(MAKE) -C outside/softfloat-3/build/Linux-386-GCC clean
 	$(MAKE) -C outside/SDL2-2.0.5 clean
 
-.PHONY: clean debbuild debinstalldistclean etags osxpackage tags
+.PHONY: clean debbuild debinstalldistclean etags osxpackage tags test
 
 ## $(MOUNTED_DESK)/%: ../ARVO/%
 $(MOUNTED_DESK)/%: arvo/%

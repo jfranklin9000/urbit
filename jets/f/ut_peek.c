@@ -83,7 +83,7 @@
           u3_atom lat = u3qc_mas(axe);
 
           if ( 3 == now ) {
-            u3_noun pec = u3qfu_perk(van, sut, way, pq_sut);
+            u3_noun pec = u3qfu_peel(van, sut, way, pq_sut);
             u3_noun sam = u3h(pec);
             u3_noun con = u3t(pec);
 
@@ -137,7 +137,7 @@
       }
       case c3__fork: p_sut = u3t(sut);
       {
-        u3_noun yed = u3qdi_tap(p_sut, u3_nul);
+        u3_noun yed = u3qdi_tap(p_sut);
         u3_noun ret = u3kf_fork(_peek_fork(van, yed, way, axe, gil));
 
         u3z(yed);

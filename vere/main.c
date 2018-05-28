@@ -97,7 +97,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.rep = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"G:B:A:I:w:t:f:k:l:n:p:r:LabcdgqvxFMPDXR")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"G:B:A:I:w:t:f:k:l:n:p:r:LabcdgmqvxFMPDXR")) != -1 ) {
     switch ( ch_i ) {
       case 'M': {
         u3_Host.ops_u.mem = c3y;
@@ -191,6 +191,14 @@ _main_getopt(c3_i argc, c3_c** argv)
         return c3n;
       }
     }
+  }
+
+  if ( u3_Host.ops_u.fak != c3y ) {
+    fprintf(stderr, "this is the development build and cannot connect\r\n");
+    fprintf(stderr, "to the live network; always run this build with -F.\r\n");
+    fprintf(stderr, "to install a live client: %s\r\n",
+                    "http://urbit.org/docs/using/install/");
+    exit(1); /* (avoid simple usage msg) */
   }
 
   if ( u3_Host.ops_u.arv_c != 0 && ( u3_Host.ops_u.imp_c == 0 ||
@@ -402,7 +410,7 @@ overflow_handler(int emergency, stackoverflow_context_t scp)
       //
       u3_lo_sway(0, u3k(u3_wire_tax(u3_Wire)));
 
-      u3_lo_bail(u3A);
+      u3_pier_exit(u3A);
 
       exit(1);
     }
@@ -441,7 +449,7 @@ void
 _stop_exit(c3_i int_i)
 {
   fprintf(stderr, "\r\n[received keyboard stop signal, exiting]\r\n");
-  u3_lo_bail();
+  u3_pier_exit();
 }
 
 c3_i
@@ -494,6 +502,20 @@ main(c3_i   argc,
   }
 #endif
 
+  //  Detect executable purpose.
+  //
+  {
+    c3_c* nam_c = strrchr(argv[0], '/');
+
+    if ( !nam_c ) 
+      nam_c = argv[0];
+    else nam_c++;
+
+    if ( !strcmp("urbit-worker", nam_c) ) {
+      return u3_serf_main(argc, argv);
+    }
+  }
+
   //  Parse options.
   //
   if ( c3n == _main_getopt(argc, argv) ) {
@@ -504,21 +526,6 @@ main(c3_i   argc,
   if ( c3y == u3_Host.ops_u.rep ) {
     report();
     return 0;
-  }
-
-  if ( c3y == u3_Host.ops_u.nuu ) {
-    struct stat s;
-    if ( !stat(u3_Host.dir_c, &s) ) {
-      fprintf(stderr, "tried to create, but %s already exists\n", u3_Host.dir_c);
-      fprintf(stderr, "normal usage: %s %s\n", argv[0], u3_Host.dir_c);
-      exit(1);
-    }
-  } else {
-    struct stat s;
-    if ( -1 == stat(u3_Host.dir_c, &s) ) {
-      fprintf(stderr, "%s: urbit not found\n", u3_Host.dir_c);
-      u3_ve_usage(argc, argv);
-    }
   }
 
 #if 0
@@ -599,38 +606,8 @@ main(c3_i   argc,
         u3C.wag_w |= u3o_dryrun;
       }
     }
-    u3m_boot(u3_Host.ops_u.nuu,
-             u3_Host.ops_u.gab,
-             u3_Host.dir_c,
-             u3_Host.ops_u.pil_c);
 
-    /*  Start Arvo.
-    */
-#if 1
-    {
-      struct timeval tim_tv;
-      u3_noun        now;
-
-      gettimeofday(&tim_tv, 0);
-      now = u3_time_in_tv(&tim_tv);
-
-      u3v_start(now);
-    }
-#endif
-#if 0
-    /*  Initial checkpoint.
-    */
-    if ( _(u3_Host.ops_u.nuu) ) {
-      printf("about to save.\r\n");
-      u3e_save();
-      printf("saved.\r\n");
-    }
-#endif
+    u3_king_commence();
   }
-
-  // u3e_grab("main", u3_none);
-  //
-  u3_lo_loop();
-
   return 0;
 }
