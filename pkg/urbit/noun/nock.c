@@ -3,6 +3,8 @@
 */
 #include "all.h"
 
+// TODO -- add nock decrement opcode
+
 // define to have each opcode printed as it executes,
 // along with some other debugging info
 #        undef VERBOSE_BYTECODE
